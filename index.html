@@ -11,6 +11,7 @@
   <title>รายจ่าย</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html{height:100dvh;overflow:hidden;overscroll-behavior:none}
 
     :root{
       --bg:#f5f5f7;
@@ -31,12 +32,13 @@
       color:var(--text);
       max-width:430px;
       margin:0 auto;
-      min-height:100dvh;
-      overflow-x:hidden;
+      height:100dvh;
+      overflow:hidden;
+      overscroll-behavior:none;
       -webkit-font-smoothing:antialiased;
     }
 
-    .page{display:none;min-height:100dvh;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 8px)}
+    .page{display:none;height:100dvh;overflow-y:auto;overscroll-behavior-y:contain;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 8px)}
     .page.active{display:block}
 
     /* BOTTOM NAV */
@@ -70,24 +72,21 @@
       width:200px;height:200px;
       background:radial-gradient(circle,rgba(0,122,255,.3) 0%,transparent 70%);
     }
-    /* MONTH SLIDE STRIP */
-    .month-strip{
-      display:flex;gap:8px;overflow-x:auto;
-      margin:0 -20px 22px;padding:0 20px 2px;
-      scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+    /* MONTH SLIDER */
+    .month-slider-wrap{overflow:hidden;margin-bottom:4px}
+    .month-slider-track{display:flex;will-change:transform;cursor:grab}
+    .month-slot{
+      flex-shrink:0;padding:10px 0 16px;text-align:center;
+      opacity:.28;transform:scale(.78);
+      transition:opacity .2s,transform .2s;
+      user-select:none;-webkit-user-select:none;
     }
-    .month-strip::-webkit-scrollbar{display:none}
-    .month-chip{
-      flex-shrink:0;scroll-snap-align:center;
-      background:rgba(255,255,255,.1);border:none;border-radius:13px;
-      padding:9px 15px;color:rgba(255,255,255,.6);cursor:pointer;font-family:inherit;
-      display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;transition:all .15s;
-    }
-    .month-chip:active{transform:scale(.96)}
-    .month-chip.active{background:#fff;color:#1d1d1f}
-    .mc-month{font-size:13px;font-weight:600}
-    .mc-amt{font-size:11px;opacity:.8;white-space:nowrap}
-    .month-chip.active .mc-amt{color:var(--blue);opacity:1}
+    .month-slot.center{opacity:1;transform:scale(1)}
+    .ms-lbl{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:6px}
+    .ms-total{font-size:44px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:white}
+    .ms-sub{font-size:13px;color:rgba(255,255,255,.4);margin-top:6px}
+    .month-slot.center .ms-lbl{color:rgba(255,255,255,.65)}
+    .month-slot.center .ms-sub{color:rgba(255,255,255,.5)}
     .dash-total-lbl{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:6px}
     .dash-total{font-size:44px;font-weight:700;letter-spacing:-1.5px;line-height:1}
     .dash-sub{font-size:13px;color:rgba(255,255,255,.45);margin-top:6px}
@@ -251,10 +250,9 @@
 <!-- MONTHLY DASHBOARD -->
 <div id="pg-month" class="page">
   <div class="dash-header">
-    <div class="month-strip" id="monthStrip"></div>
-    <div class="dash-total-lbl">รายจ่าย <span id="monthName"></span></div>
-    <div class="dash-total" id="dashTotal">฿0</div>
-    <div class="dash-sub" id="dashSub">0 รายการ</div>
+    <div class="month-slider-wrap" id="monthSliderWrap">
+      <div class="month-slider-track" id="monthSliderTrack"></div>
+    </div>
   </div>
 
   <div class="pills">
@@ -516,32 +514,36 @@ function renderAll() {
   }).join('');
 }
 
-// MONTH SLIDE STRIP
-function renderMonthStrip() {
-  const months = allMonths();
-  const strip  = document.getElementById('monthStrip');
-  strip.innerHTML = months.map(m=>{
-    const tot = monthExps(m).reduce((s,e)=>s+e.amount,0);
-    return `<button class="month-chip ${m===st.dashMonth?'active':''}" onclick="selectMonth('${m}')">
-      <span class="mc-month">${monthShort(m)}</span>
-      <span class="mc-amt">${tot?fmtMoney(tot):'—'}</span>
-    </button>`;
+// MONTH SLIDER
+function renderMonthSlider() {
+  const wrap  = document.getElementById('monthSliderWrap');
+  const track = document.getElementById('monthSliderTrack');
+  const slots = [shiftMonth(st.dashMonth,-1), st.dashMonth, shiftMonth(st.dashMonth,1)];
+  track.style.transition = 'none';
+  track.innerHTML = slots.map((m,i)=>{
+    const exps = monthExps(m);
+    const tot  = exps.reduce((s,e)=>s+e.amount,0);
+    return `<div class="month-slot${i===1?' center':''}" data-m="${m}">
+      <div class="ms-lbl">รายจ่าย ${monthStr(m)}</div>
+      <div class="ms-total">${fmtMoney(tot)}</div>
+      <div class="ms-sub">${exps.length} รายการ</div>
+    </div>`;
   }).join('');
-  const active = strip.querySelector('.month-chip.active');
-  if(active) active.scrollIntoView({inline:'center',block:'nearest'});
+  requestAnimationFrame(()=>{
+    const w = wrap.clientWidth;
+    track.querySelectorAll('.month-slot').forEach(s=>s.style.minWidth=w+'px');
+    track.style.transform = `translateX(${-w}px)`;
+  });
 }
 
 function selectMonth(m) { st.dashMonth = m; renderDash(); }
 
 // MONTHLY DASHBOARD
 function renderDash() {
-  renderMonthStrip();
-  document.getElementById('monthName').textContent = monthStr(st.dashMonth);
+  renderMonthSlider();
   const exps  = monthExps(st.dashMonth);
   const total = exps.reduce((s,e)=>s+e.amount, 0);
   const days  = new Set(exps.map(e=>e.date)).size;
-  document.getElementById('dashTotal').textContent = fmtMoney(total);
-  document.getElementById('dashSub').textContent   = exps.length+' รายการ';
   document.getElementById('statDays').textContent  = days;
   document.getElementById('statAvg').textContent   = days ? fmtMoney(Math.round(total/days)) : '฿0';
 
@@ -604,7 +606,7 @@ function changeMonth(dir) {
   let sx=null, sy=null;
   const pg = document.getElementById('pg-month');
   pg.addEventListener('touchstart', e=>{
-    if(e.target.closest('.month-strip')) { sx=null; return; }
+    if(e.target.closest('.month-slider-wrap')) { sx=null; return; }
     sx=e.touches[0].clientX; sy=e.touches[0].clientY;
   }, {passive:true});
   pg.addEventListener('touchend', e=>{
@@ -722,6 +724,40 @@ function backdropClose(e, id) {
 load();
 renderAll();
 document.getElementById('addMonthLabel').textContent = monthStr(st.addMonth);
+
+(function(){
+  const wrap  = document.getElementById('monthSliderWrap');
+  const track = document.getElementById('monthSliderTrack');
+  let sx = null;
+  wrap.addEventListener('touchstart', e=>{
+    sx = e.touches[0].clientX;
+    track.style.transition = 'none';
+  }, {passive:true});
+  wrap.addEventListener('touchmove', e=>{
+    if(sx===null) return;
+    const dx = e.touches[0].clientX - sx;
+    const w = wrap.clientWidth;
+    track.style.transform = `translateX(${-w+dx}px)`;
+  }, {passive:true});
+  wrap.addEventListener('touchend', e=>{
+    if(sx===null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    const w = wrap.clientWidth;
+    sx = null;
+    if(dx > 50){
+      track.style.transition = 'transform .25s cubic-bezier(.4,0,.2,1)';
+      track.style.transform = 'translateX(0)';
+      setTimeout(()=>{ st.dashMonth=shiftMonth(st.dashMonth,-1); renderDash(); },250);
+    } else if(dx < -50){
+      track.style.transition = 'transform .25s cubic-bezier(.4,0,.2,1)';
+      track.style.transform = `translateX(${-w*2}px)`;
+      setTimeout(()=>{ st.dashMonth=shiftMonth(st.dashMonth,1); renderDash(); },250);
+    } else {
+      track.style.transition = 'transform .2s cubic-bezier(.4,0,.2,1)';
+      track.style.transform = `translateX(${-w}px)`;
+    }
+  }, {passive:true});
+})();
 </script>
 </body>
 </html>
