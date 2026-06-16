@@ -1,14 +1,17 @@
-export type Tab = "schedule" | "exercise" | "expense";
+import Icon, { type IconName } from "./Icon";
+
+export type Tab = "overview" | "schedule" | "exercise" | "expense";
 
 interface Props {
   tab: Tab;
   onChange: (t: Tab) => void;
 }
 
-const TABS: { key: Tab; icon: string; label: string }[] = [
-  { key: "schedule", icon: "📅", label: "ตาราง" },
-  { key: "exercise", icon: "💪", label: "ออกกำลัง" },
-  { key: "expense", icon: "💰", label: "รายจ่าย" },
+const TABS: { key: Tab; icon: IconName; label: string }[] = [
+  { key: "overview", icon: "home", label: "ภาพรวม" },
+  { key: "schedule", icon: "calendar", label: "ตาราง" },
+  { key: "exercise", icon: "activity", label: "ออกกำลัง" },
+  { key: "expense", icon: "wallet", label: "รายจ่าย" },
 ];
 
 export default function BottomNav({ tab, onChange }: Props) {
@@ -18,10 +21,10 @@ export default function BottomNav({ tab, onChange }: Props) {
         const active = tab === t.key;
         return (
           <button key={t.key} onClick={() => onChange(t.key)}
-            className={`flex flex-1 flex-col items-center gap-0.5 rounded-xl py-1 transition active:scale-95 ${
-              active ? "text-white" : "text-[#8a8a92]"}`}>
-            <span className={`text-xl leading-none transition ${active ? "" : "grayscale opacity-70"}`}>{t.icon}</span>
-            <span className={`text-[10px] font-semibold ${active ? "text-[#ff5a64]" : ""}`}>{t.label}</span>
+            className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-1 transition active:scale-90 ${
+              active ? "text-[#ff5a64]" : "text-[#8a8a92]"}`}>
+            <Icon name={t.icon} size={23} strokeWidth={active ? 2.2 : 1.8} />
+            <span className={`text-[10px] ${active ? "font-bold" : "font-medium"}`}>{t.label}</span>
           </button>
         );
       })}

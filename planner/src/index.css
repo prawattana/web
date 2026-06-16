@@ -22,9 +22,9 @@
   --fc-list-event-hover-bg-color: rgba(255, 255, 255, 0.06);
 }
 
-html, body, #root { height: 100%; }
-/* กันขอบขาวตอน overscroll (เด้งยาง) บน iOS */
-html { background: #0c0c10; }
+html, body, #root { height: 100dvh; min-height: 100dvh; }
+/* กันขอบขาว/ดำตอน overscroll (เด้งยาง) บน iOS — html สีเดียวกับธีม */
+html { background: #121217; }
 html, body { overscroll-behavior: none; }
 body {
   margin: 0;
