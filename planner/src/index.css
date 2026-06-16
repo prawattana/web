@@ -22,7 +22,9 @@
   --fc-list-event-hover-bg-color: rgba(255, 255, 255, 0.06);
 }
 
-html, body, #root { height: 100dvh; min-height: 100dvh; }
+html, body { height: 100dvh; min-height: 100dvh; }
+/* ปักหมุด #root เต็มจอจริงทั้ง 4 ด้าน — แถบล่างชนขอบล่างเป๊ะบน iOS standalone */
+#root { position: fixed; inset: 0; }
 /* กันขอบขาว/ดำตอน overscroll (เด้งยาง) บน iOS — html สีเดียวกับธีม */
 html { background: #121217; }
 html, body { overscroll-behavior: none; }
