@@ -1,8 +1,9 @@
 {
   "name": "web",
   "private": true,
-  "description": "เว็บรวมเครื่องมือส่วนตัว: แอปรายจ่าย (/) + ตารางสัปดาห์ (/planner)",
+  "description": "My Day — แอปส่วนตัวรวม: ตารางงาน + ออกกำลังกาย + รายจ่าย (React/Vite)",
   "scripts": {
-    "build": "npm --prefix planner install && npm --prefix planner run build && node assemble.mjs"
+    "dev": "npm --prefix planner run dev",
+    "build": "npm --prefix planner run build"
   }
 }

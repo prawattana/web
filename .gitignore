@@ -4,3 +4,5 @@ planner/node_modules/
 planner/dist/
 .vercel
 *.log
+
+.vercel

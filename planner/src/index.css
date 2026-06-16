@@ -46,6 +46,8 @@ body {
 /* safe-area iPhone (รอยบาก/แถบล่าง) */
 .pt-safe { padding-top: max(env(safe-area-inset-top), 8px); }
 .bottom-safe { bottom: calc(1rem + env(safe-area-inset-bottom)); }
+.nav-safe { padding-bottom: max(env(safe-area-inset-bottom), 6px); }
+.fab-above-nav { bottom: calc(74px + env(safe-area-inset-bottom)); }
 
 /* ===== แผ่น glass ใช้ซ้ำ ===== */
 .glass {
