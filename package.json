@@ -1,0 +1,8 @@
+{
+  "name": "web",
+  "private": true,
+  "description": "เว็บรวมเครื่องมือส่วนตัว: แอปรายจ่าย (/) + ตารางสัปดาห์ (/planner)",
+  "scripts": {
+    "build": "npm --prefix planner install && npm --prefix planner run build && node assemble.mjs"
+  }
+}
