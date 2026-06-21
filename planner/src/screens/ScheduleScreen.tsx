@@ -5,6 +5,7 @@ import Calendar from "../components/Calendar";
 import CalendarHeader, { type StripDay } from "../components/CalendarHeader";
 import EventModal from "../components/EventModal";
 import DayModal from "../components/DayModal";
+import QuickAdd from "../components/QuickAdd";
 import { useSchedule } from "../hooks/useSchedule";
 import type { PlannerEvent } from "../types";
 import { genId, mondayOf, weekDates, ymd } from "../data/recurrence";
@@ -75,6 +76,13 @@ export default function ScheduleScreen() {
     setEditing(null);
   };
 
+  const quickAdd = (p: { title: string; type: PlannerEvent["type"]; start: string; end: string }) => {
+    const ev: PlannerEvent = { id: genId(), ...p };
+    sched.addEvent(ev);
+    api()?.gotoDate(p.start.slice(0, 10));
+    return ev;
+  };
+
   const changeView = (v: View) => { setView(v); api()?.changeView(v); };
   const pickDay = (date: string) => { setView("timeGridDay"); api()?.changeView("timeGridDay", date); };
 
@@ -91,7 +99,12 @@ export default function ScheduleScreen() {
         onToday={() => api()?.today()}
         onView={changeView}
         onPickDay={pickDay}
+        onAdd={openNewFab}
       />
+
+      <div className="px-2.5 pb-1 md:px-4 md:pb-2">
+        <QuickAdd onAdd={quickAdd} onDelete={sched.deleteEvent} />
+      </div>
 
       <main className="min-h-0 flex-1 px-2 pb-2">
         <Calendar
@@ -112,7 +125,7 @@ export default function ScheduleScreen() {
       </main>
 
       <button onClick={openNewFab}
-        className="btn-primary fab-above-nav fixed right-4 z-20 flex h-11 w-11 items-center justify-center rounded-full text-2xl leading-none shadow-xl">
+        className="btn-primary fab-above-nav fixed right-4 z-20 flex h-11 w-11 items-center justify-center rounded-full text-2xl leading-none shadow-xl md:hidden">
         +
       </button>
 

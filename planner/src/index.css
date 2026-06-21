@@ -79,6 +79,7 @@ body {
   backdrop-filter: blur(10px);
   transition: transform 0.12s ease, background 0.12s ease;
 }
+.btn-glass:hover { background: rgba(255, 255, 255, 0.16); }
 .btn-glass:active { transform: scale(0.96); }
 
 .field {
@@ -156,6 +157,9 @@ input.field[type="date"], input.field[type="time"] { -webkit-appearance: none; a
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 .fc-event:active { transform: scale(0.98); }
+@media (hover: hover) {
+  .fc-event:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.18); filter: brightness(1.08); }
+}
 .fc-event .fc-event-time { font-family: ui-monospace, monospace; opacity: 0.85; }
 
 .ev-work     { background: linear-gradient(180deg, #54545e, #393941) !important; color: #f1f1f4 !important; }
@@ -181,3 +185,14 @@ input.field[type="date"], input.field[type="time"] { -webkit-appearance: none; a
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 6px; }
+
+/* ===== Desktop: โปร่งสบายตา ช่องเวลาสูงขึ้น ฟอนต์ใหญ่ขึ้น ===== */
+@media (min-width: 768px) {
+  .fc { font-size: 13px; }
+  .fc .fc-timegrid-slot { height: 40px; }
+  .fc .fc-timegrid-slot-label-cushion { font-size: 12px; padding: 0 8px; }
+  .fc .fc-col-header-cell-cushion { font-size: 13px; }
+  .fc .fc-timegrid-axis-cushion { font-size: 11px; }
+  .fc-event { font-size: 12.5px; padding: 2px 5px; }
+  .fc-event .fc-event-title { font-size: 12.5px; }
+}

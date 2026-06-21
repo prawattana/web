@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 
-export type IconName = "home" | "calendar" | "activity" | "wallet" | "plus" | "flame";
+export type IconName =
+  | "home" | "calendar" | "activity" | "wallet" | "plus" | "flame"
+  | "check" | "checkSquare" | "clock" | "bell" | "x";
 
 const PATHS: Record<IconName, ReactNode> = {
   home: (<><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.8V21h14V9.8" /></>),
@@ -9,6 +11,11 @@ const PATHS: Record<IconName, ReactNode> = {
   wallet: (<><rect x="3" y="6" width="18" height="14" rx="3.5" /><path d="M3 9.5h13.5a1.5 1.5 0 0 1 1.5 1.5" /><circle cx="16.5" cy="13.5" r="1.1" fill="currentColor" stroke="none" /></>),
   plus: (<path d="M12 5v14M5 12h14" />),
   flame: (<path d="M12 3c1 3 4 4.5 4 8a4 4 0 0 1-8 0c0-1.4.6-2.4 1.3-3.2C9.8 9 10 7.5 12 3Z" />),
+  check: (<path d="M20 6 9 17l-5-5" />),
+  checkSquare: (<><path d="m9 11 3 3 8-8" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></>),
+  clock: (<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>),
+  bell: (<><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>),
+  x: (<path d="M18 6 6 18M6 6l12 12" />),
 };
 
 export default function Icon({ name, size = 24, className, strokeWidth = 1.8 }: {
